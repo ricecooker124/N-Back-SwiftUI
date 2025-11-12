@@ -60,19 +60,17 @@ struct ContentView: View {
 
 
 
-struct ContentView_Previews:     {
+struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         Group{
-            ForEach(["iPhone SE (3rd generation)", "iPhone 14 Pro Max"], id: \.self) { deviceName in
-                           ContentView()
-                                .previewDevice(PreviewDevice(rawValue: deviceName))
-                                .previewDisplayName(deviceName)
-                                .environmentObject(N_Back_SwiftUIVM())
-                      }
+            ContentView()
+                .previewDevice(PreviewDevice(rawValue: "iPhone 17 Pro"))
+                .previewDisplayName("iPhone 17 Pro")
+                .environmentObject(N_Back_SwiftUIVM())
             
             ContentView()
-                .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro Max"))
-                .previewDisplayName("iPhone 14 Pro Max Landscape")
+                .previewDevice(PreviewDevice(rawValue: "iPhone 17 Pro"))
+                .previewDisplayName("iPhone 17 Pro Landscape")
                 .environmentObject(N_Back_SwiftUIVM())
                 .previewInterfaceOrientation(.landscapeRight)
         }
