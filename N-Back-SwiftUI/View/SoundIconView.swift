@@ -8,23 +8,23 @@
 import SwiftUI
 
 struct SoundIconView: View {
+    let title: String
+
     var body: some View {
         HStack {
             Image(systemName: "speaker.wave.3.fill")
                 .imageScale(.large)
-            Text("Sound")
+            Text(title)
         }
         .padding()
-       
-        .foregroundColor(Color.white)
+        .foregroundColor(.white)
         .background(Color.blue)
         .cornerRadius(40)
-        
     }
 }
 
 struct SoundIconView_Previews: PreviewProvider {
     static var previews: some View {
-        SoundIconView()
+        SoundIconView(title: "Match")
     }
 }

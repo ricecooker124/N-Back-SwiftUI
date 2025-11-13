@@ -7,78 +7,62 @@
 
 import SwiftUI
 
-
-// Our custom view modifier to track rotation and
-// call our action
-struct DeviceRotationViewModifier: ViewModifier {
-    let action: (UIDeviceOrientation) -> Void
-
-    func body(content: Content) -> some View {
-        content
-            .onAppear()
-            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                action(UIDevice.current.orientation)
-            }
-    }
-}
-
-// A View wrapper to make the modifier easier to use
-extension View {
-    func onRotate(perform action: @escaping (UIDeviceOrientation) -> Void) -> some View {
-        self.modifier(DeviceRotationViewModifier(action: action))
-    }
-}
-
 struct ContentView: View {
-    @EnvironmentObject var theViewModel : N_Back_SwiftUIVM
-    @State private var orientation = UIDeviceOrientation.portrait
+    @EnvironmentObject var theViewModel: N_Back_SwiftUIVM
     
     var body: some View {
-        VStack() {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            
-            Text("High-Score \(theViewModel.highScore)")
-            Spacer()
-            Button {
-                theViewModel.newHighScoreValue()
-            } label: {
-                Text("Generate eventValue")
-                    .font(.title)
+        NavigationStack {
+            VStack(spacing: 24) {
+                
+                Image(systemName: "brain.head.profile")
+                    .imageScale(.large)
+                    .font(.system(size: 40))
+                    .foregroundColor(.accentColor)
+                
+                Text("N-Back Trainer")
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                
+                Text("High-Score: \(theViewModel.highScore)")
+                    .font(.title3)
+                
+                VStack(spacing: 4) {
+                    Text("Current settings:")
+                        .font(.headline)
+                    Text("Mode: \(theViewModel.mode.title)")
+                    Text("n = \(theViewModel.n)")
+                    Text("Events: \(theViewModel.numberOfEvents)")
+                    Text(String(format: "Time/Event: %.1f s", theViewModel.timeBetweenEvents))
+                }
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                NavigationLink("Start Game") {
+                    GameSwiftUIView()
+                }
+                .buttonStyle(.borderedProminent)
+                .font(.title3)
+                
+                NavigationLink("Settings") {
+                    SettingsSwiftUIView()
+                }
+                .buttonStyle(.bordered)
+                
+                Spacer()
             }
             .padding()
-            Spacer()
-            ActionIconView()
-            
         }
-        .padding()
     }
 }
-
-
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        Group{
-            ContentView()
-                .previewDevice(PreviewDevice(rawValue: "iPhone 17 Pro"))
-                .previewDisplayName("iPhone 17 Pro")
-                .environmentObject(N_Back_SwiftUIVM())
-            
-            ContentView()
-                .previewDevice(PreviewDevice(rawValue: "iPhone 17 Pro"))
-                .previewDisplayName("iPhone 17 Pro Landscape")
-                .environmentObject(N_Back_SwiftUIVM())
-                .previewInterfaceOrientation(.landscapeRight)
-        }
-        
+        ContentView()
+            .environmentObject(N_Back_SwiftUIVM())
     }
 }
-
-
 
 
 

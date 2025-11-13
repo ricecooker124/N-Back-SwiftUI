@@ -6,42 +6,113 @@
 //
 
 import Foundation
-import AVFoundation
+import Combine
 
-class N_Back_SwiftUIVM : ObservableObject  {
-    let synthesizer = AVSpeechSynthesizer()
-    var theModel : N_BackSwiftUIModel
-    @Published var highScore : Int
-    
-    init(){
-        theModel = N_BackSwiftUIModel(count: 0)
-        highScore = theModel.getHighScore()
+final class N_Back_SwiftUIVM: ObservableObject {
+
+    @Published var settings: SettingsViewModel
+    @Published var game: PlaySessionViewModel
+
+    private var cancellables = Set<AnyCancellable>()
+
+    init() {
+        self.settings = SettingsViewModel()
+        self.game = PlaySessionViewModel()
+
+        settings.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
+
+        game.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
     }
-    
-    func newHighScoreValue(){
-        theModel.addScore()
-        highScore = theModel.getHighScore()
+
+
+    var highScore: Int {
+        game.highScore
     }
-    
-    
-    func soundClick(){
-        let theString: String = theModel.getString()
-        speech(aString: theString)
+
+    var mode: StimulusMode {
+        get { settings.mode }
+        set { settings.mode = newValue }
     }
-    
-    func imageClick(){
-        theModel.resetNback()
+
+    var n: Int {
+        get { settings.nBack }
+        set { settings.nBack = newValue }
     }
-    
-    
-    // IO handling
-    
-    func speech(aString: String){
-        let soundVoice = AVSpeechUtterance(string: aString)
-        synthesizer.stopSpeaking(at: AVSpeechBoundary.immediate )
-        synthesizer.speak(soundVoice)
+
+    var numberOfEvents: Int {
+        get { settings.sequenceLength }
+        set { settings.sequenceLength = newValue }
     }
-    
+
+    var timeBetweenEvents: Double {
+        get { settings.stepInterval }
+        set { settings.stepInterval = newValue }
+    }
+
+    var gridSize: Int {
+        get { settings.gridDimension }
+        set { settings.gridDimension = newValue }
+    }
+
+    var numberOfLetters: Int {
+        get { settings.audioLetterCount }
+        set { settings.audioLetterCount = newValue }
+    }
+
+
+    var sequence: [Int] {
+        game.sequence
+    }
+
+    var currentIndex: Int? {
+        game.currentIndex
+    }
+
+    var eventNumber: Int {
+        game.eventNumber
+    }
+
+    var correctResponses: Int {
+        game.correctResponses
+    }
+
+    var isRunning: Bool {
+        game.isRunning
+    }
+
+    var currentLetter: String? {
+        game.currentLetter
+    }
+
+    // MARK: - Metoder som Views redan använder
+
+    func soundClick() {
+        settings.mode = .audio
+    }
+
+    func imageClick() {
+        settings.mode = .visual
+    }
+
+    func startRound() {
+        game.start(using: settings)
+    }
+
+    func stopRound() {
+        game.stop()
+    }
+
+    func pressMatch() -> Bool? {
+        game.evaluateMatch(nBack: settings.nBack)
+    }
 }
 
 

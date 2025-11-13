@@ -8,23 +8,23 @@
 import SwiftUI
 
 struct ImageIconView: View {
+    let title: String
+
     var body: some View {
         HStack {
             Image(systemName: "eye")
                 .imageScale(.large)
-            Text("Image")
+            Text(title)
         }
         .padding()
-       
-        .foregroundColor(Color.white)
+        .foregroundColor(.white)
         .background(Color.blue)
         .cornerRadius(40)
-        
     }
 }
 
 struct ImageIconView_Previews: PreviewProvider {
     static var previews: some View {
-        ImageIconView()
+        ImageIconView(title: "Match")
     }
 }

@@ -8,32 +8,37 @@
 import Foundation
 
 struct N_BackSwiftUIModel {
-    private var count : Int
+    private var count: Int
     
     init(count: Int) {
         self.count = count
     }
     
-    func getString() -> String{
-        return "Hello World"
-    }
-    
-    func getHighScore() -> Int{
+    func getHighScore() -> Int {
         return count
     }
     
-    mutating func addScore(){
+    mutating func addScore() {
         count += 1
     }
-      
-    mutating func resetNback(){
-        let Nback = create(20, 9, 20, 2)
-        
+    
+    mutating func resetNback() {
+        let nback = create(20, 9, 20, 2)
         for i in 1...3 {
-            let test:Int32 = Int32(i)
-            print("aValue: \(getIndexOf(Nback, test))")
+            let index = Int32(i)
+            print("aValue: \(getIndexOf(nback, index))")
         }
-        
     }
-   
+    
+    mutating func generateSequence(length: Int, combinations: Int, matchPercentage: Int, nback: Int) -> [Int] {
+        let s = create(Int32(length), Int32(combinations), Int32(matchPercentage), Int32(nback))
+        
+        var result: [Int] = []
+        result.reserveCapacity(length)
+        
+        for i in 0..<length {
+            result.append(Int(getIndexOf(s, Int32(i))))
+        }
+        return result
+    }
 }
